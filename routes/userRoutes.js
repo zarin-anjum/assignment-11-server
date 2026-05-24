@@ -33,7 +33,7 @@ router.post("/jwt", async (req, res) => {
     const token = jwt.sign(
       { email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.status(200).json({ token });
@@ -68,9 +68,45 @@ router.patch("/:id/role", verifyToken, async (req, res) => {
     const updated = await User.findByIdAndUpdate(
       req.params.id,
       { role },
-      { new: true }
+      { new: true },
     );
     if (!updated) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get("/participated", verifyToken, async (req, res) => {
+  try {
+    const contests = await Contest.find({
+      registeredUsers: req.user.email,
+    }).select("-submissions -__v");
+    res.status(200).json(contests);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get("/winnings", verifyToken, async (req, res) => {
+  try {
+    const contests = await Contest.find({
+      "winner.email": req.user.email,
+    }).select("contestName type prizeMoney winner");
+    res.status(200).json(contests);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.patch("/me", verifyToken, async (req, res) => {
+  const { name, photo, bio } = req.body;
+  try {
+    const updated = await User.findOneAndUpdate(
+      { email: req.user.email },
+      { name, photo, bio },
+      { new: true },
+    );
     res.status(200).json(updated);
   } catch (err) {
     res.status(500).json({ message: err.message });
