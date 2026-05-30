@@ -1,11 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import contestRoutes from "./routes/contestRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
-dotenv.config();
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +18,7 @@ app.use(express.json());
 
 app.use("/contests", contestRoutes);
 app.use("/users", userRoutes);
+app.use("/payment", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("ContestHub server is running ✅");
