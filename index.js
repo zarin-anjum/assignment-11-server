@@ -16,6 +16,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "https://contesthub-zarin.netlify.app",
+      "https://upgrade-contesthub-zarin.netlify.app",
     ],
     credentials: true,
   }),
